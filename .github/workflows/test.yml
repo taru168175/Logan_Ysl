@@ -40,7 +40,7 @@ jobs:
 
     # Step 6: (Optional) Archive build artifacts
     - name: Upload build artifacts
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v4
       with:
         name: obfuscator-build
         path: build/bin/
