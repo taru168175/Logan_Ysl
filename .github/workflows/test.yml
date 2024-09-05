@@ -8,34 +8,29 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    # Step 1: Check out the code from your repository
-    - name: Checkout code
-      uses: actions/checkout@v2
-
-    # Step 2: Install dependencies (CMake, GCC, Clang, etc.)
+    # Step 1: Install dependencies (CMake, GCC, Clang, etc.)
     - name: Install dependencies
       run: |
         sudo apt-get update
         sudo apt-get install -y build-essential cmake git ninja-build
 
-    # Step 3: Clone the LLVM Obfuscator repository
+    # Step 2: Clone the LLVM Obfuscator repository
     - name: Clone LLVM Obfuscator
       run: |
         git clone -b llvm-4.0 https://github.com/obfuscator-llvm/obfuscator.git
-        cd obfuscator
-        mkdir build
-        cd build
+        mkdir -p obfuscator/build
 
-    # Step 4: Configure CMake and build LLVM with obfuscator
+    # Step 3: Configure CMake and build LLVM with obfuscator
     - name: Configure CMake
+      working-directory: obfuscator/build
       run: |
-        cmake -DCMAKE_BUILD_TYPE=Release ../obfuscator/
+        cmake -DCMAKE_BUILD_TYPE=Release ../
         make -j$(nproc)
 
-    # Step 5: Verify the build (optional)
+    # Step 4: Verify the build (optional)
     - name: Verify build
+      working-directory: obfuscator/build
       run: |
-        cd build
         ./bin/clang --version
 
     # Step 6: (Optional) Archive build artifacts
