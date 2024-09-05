@@ -1,0 +1,51 @@
+name: Build LLVM Obfuscator
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    # Step 1: Check out the code from your repository
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    # Step 2: Install dependencies (CMake, GCC, Clang, etc.)
+    - name: Install dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y build-essential cmake git ninja-build
+
+    # Step 3: Clone the LLVM Obfuscator repository
+    - name: Clone LLVM Obfuscator
+      run: |
+        git clone -b llvm-4.0 https://github.com/obfuscator-llvm/obfuscator.git
+        cd obfuscator
+        mkdir build
+        cd build
+
+    # Step 4: Configure CMake and build LLVM with obfuscator
+    - name: Configure CMake
+      run: |
+        cmake -DCMAKE_BUILD_TYPE=Release ../obfuscator/
+        make -j$(nproc)
+
+    # Step 5: Verify the build (optional)
+    - name: Verify build
+      run: |
+        cd build
+        ./bin/clang --version
+
+    # Step 6: (Optional) Archive build artifacts
+    - name: Upload build artifacts
+      uses: actions/upload-artifact@v2
+      with:
+        name: obfuscator-build
+        path: build/bin/
